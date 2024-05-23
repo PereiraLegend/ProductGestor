@@ -1,23 +1,23 @@
-const {Sistemas: SistemaModel} = require("../models/SistemaModel")
+const { Sistemas: SistemaModel } = require("../models/SistemaModel")
 
 const SistemaController = {
-    getId: async(req,res) => {
+    getId: async (req, res) => {
         try {
             const id = req.params.id
             const sistemas = await SistemaModel.findById(id)
 
-            if(!sistemas){
-                res.status(404).json({msg:"Sistema não encontrado!"})
+            if (!sistemas) {
+                res.status(404).json({ msg: "Sistema não encontrado!" })
                 return;
             }
-            
+
             res.status(200).json(sistemas)
         } catch (error) {
             console.log(`Deu erro em: ${error}`)
         }
     },
 
-    getAll: async(req,res) => {
+    getAll: async (req, res) => {
         try {
             const sistemas = await SistemaModel.find()
             res.status(200).json(sistemas)
@@ -26,8 +26,8 @@ const SistemaController = {
         }
     },
 
-    create: async(req,res) => {
-        try{
+    create: async (req, res) => {
+        try {
             const sistemas = {
                 nome: req.body.nome,
                 descricao: req.body.descricao,
@@ -35,13 +35,13 @@ const SistemaController = {
 
             const response = await SistemaModel.create(sistemas)
 
-            res.status(201).json({response, msg: "Sistema cadastrado com sucesso!"})
+            res.status(201).json({ response, msg: "Sistema cadastrado com sucesso!" })
         } catch (error) {
             console.log(`Deu erro em: ${error}`)
         }
     },
 
-    update: async(req,res) => {
+    update: async (req, res) => {
         try {
             const id = req.params.id
 
@@ -53,26 +53,26 @@ const SistemaController = {
             const updateSistema = await SistemaModel.findByIdAndUpdate(id, sistema)
 
             if (!updateSistema) {
-                res.status(404).json({msg:"Sistema não encontrado"})
+                res.status(404).json({ msg: "Sistema não encontrado" })
                 return;
             }
 
-            res.status(200).json({updateSistema, msg:"Sistema atualizado com sucesso!"})
+            res.status(200).json({ updateSistema, msg: "Sistema atualizado com sucesso!" })
         } catch (error) {
-            
+
         }
     },
 
-    delete: async(req,res) => {
+    delete: async (req, res) => {
         try {
             const id = req.params.id
             const sistema = await SistemaModel.findById(id)
             if (!sistema) {
-                res.status(404).json({msg:"Sistema não encontrado"})
+                res.status(404).json({ msg: "Sistema não encontrado" })
                 return;
             }
             const deleteSistema = await SistemaModel.findByIdAndDelete(id)
-            res.status(200).json({deleteSistema, msg: "Sistema deletado com sucesso!"})
+            res.status(200).json({ deleteSistema, msg: "Sistema deletado com sucesso!" })
         } catch (error) {
             console.log(`Deu erro em: ${error}`)
         }

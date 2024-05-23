@@ -16,9 +16,9 @@ const PostSchema = new Schema({
     sistema: {
         type: mongoose.Schema.Types.ObjectId, ref: 'Sistemas', required: true,
     }
-},{ timestamps:true })
+}, { timestamps: true })
 
-const Posts = mongoose.model("Sistemas", PostSchema)
+const Posts = mongoose.model("Posts", PostSchema)
 
 module.exports = {
     Posts,

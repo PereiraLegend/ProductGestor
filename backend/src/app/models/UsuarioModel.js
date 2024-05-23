@@ -11,12 +11,12 @@ const UsuarioSchema = new Schema({
         required: true,
     },
     regra: {
-        type: String, enum:['Admin','Usuario'], default: 'Usuario'
+        type: String, enum: ['Admin', 'Usuario'], default: 'Usuario'
     },
-    sistema:[{
+    sistema: [{
         type: mongoose.Schema.Types.ObjectId, ref: 'Sistemas'
     }]
-},{ timestamps:true })
+}, { timestamps: true })
 
 const Usuarios = mongoose.model("Usuarios", UsuarioSchema)
 

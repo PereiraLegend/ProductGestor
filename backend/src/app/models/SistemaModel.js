@@ -10,7 +10,7 @@ const SistemaSchema = new Schema({
         type: String,
         required: true
     }
-},{ timestamps:true })
+}, { timestamps: true })
 
 const Sistemas = mongoose.model("Sistemas", SistemaSchema)
 
