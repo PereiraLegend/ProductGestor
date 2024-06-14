@@ -10,5 +10,6 @@ router.route("/usuario/login").post((req, res) => UsuarioController.login(req, r
 router.route("/usuario/all").get(auth, adminAuth, (req, res) => UsuarioController.getAll(req, res))
 router.route("/usuario/:id").get(auth, adminAuth, (req, res) => UsuarioController.getId(req, res))
 router.route("/usuario/:id").delete(auth, adminAuth, (req, res) => UsuarioController.delete(req, res))
+router.route("/usuario/:id").put(auth, adminAuth, (req,res) => UsuarioController.update(req,res))
 
 module.exports = router

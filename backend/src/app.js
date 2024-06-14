@@ -3,7 +3,7 @@ const express = require('express')
 const cors = require('cors')
 const app = express()
 const conexao = require('./app/database/conexao')
-const PORT = process.env.PORT || 5001
+const PORT = process.env.PORT || 5002
 
 app.use(cors())
 app.use(express.json())

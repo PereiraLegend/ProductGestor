@@ -1,44 +1,55 @@
-import { createContext } from "react";
-import { setCookie } from "nookies";
-import { signInRequest } from ""
+// contexts/AuthContext.tsx
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import axios from 'axios';
 
-type AuthContextType = {
-    isAuthenticated: boolean;
-}
+const AuthContext = createContext(null);
 
-type SingInData = {
-    nome: string,
-    password: string
-}
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
-type User = {
-    nome: string,
-    password: string
-}
-
-export const AuthContext = createContext({} as AuthContextType)
-
-export function AuthProvider ({ children }) {
-    const [user, setUser] = useState<User | null>(null)
-
-    const isAuthenticated = false
-
-    async function singIn({nome, password}: SingInData) {
-        const { token, user } = await signInRequest({
-            nome,
-            password
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      axios.get('http://localhost:5001/api/usuario/me')
+        .then(response => {
+          setUser(response.data);
+          setLoading(false);
         })
-
-        setCookie(undefined, 'blogchan.token', token, {
-            maxAge: 60 * 60 * 1, //1 hora
-        })
-
-        setUser(user)
+        .catch(() => {
+          setLoading(false);
+        });
+    } else {
+      setLoading(false);
     }
+  }, []);
 
-    return (
-        <AuthContext.Provider value={{ isAuthenticated }}>
-            {children}
-        </AuthContext.Provider>
-    )
-}
+  const login = async (nome, password) => {
+    const response = await axios.post('http://localhost:5001/api/usuario/login', { nome, password });
+    localStorage.setItem('token', response.data.token);
+    axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+    setUser(response.data.user);
+    if (response.data.user.regra === 'Admin') {
+      router.push('/admin');
+    } else {
+      router.push('/client');
+    }
+  };
+
+  const logout = () => {
+    localStorage.removeItem('token');
+    setUser(null);
+    router.push('/login');
+  };
+
+  return (
+    <AuthContext.Provider value={{ user, login, logout, loading }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export const useAuth = () => useContext(AuthContext);

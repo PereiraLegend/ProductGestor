@@ -14,6 +14,7 @@ const SistemaController = {
             res.status(200).json(sistemas)
         } catch (error) {
             console.log(`Deu erro em: ${error}`)
+            res.status(400).send("Erro ao listar sistema")
         }
     },
 
@@ -23,6 +24,7 @@ const SistemaController = {
             res.status(200).json(sistemas)
         } catch (error) {
             console.log(`Deu erro em: ${error}`)
+            res.status(400).send("Erro ao listar sistemas")
         }
     },
 
@@ -38,6 +40,7 @@ const SistemaController = {
             res.status(201).json({ response, msg: "Sistema cadastrado com sucesso!" })
         } catch (error) {
             console.log(`Deu erro em: ${error}`)
+            res.status(400).send("Erro ao criar sistema")
         }
     },
 
@@ -59,7 +62,8 @@ const SistemaController = {
 
             res.status(200).json({ updateSistema, msg: "Sistema atualizado com sucesso!" })
         } catch (error) {
-
+            console.log(`Erro ao atualizar o sistema: ${error}`)
+            res.status(400).send("Erro ao atualizar sistema")
         }
     },
 
@@ -75,6 +79,7 @@ const SistemaController = {
             res.status(200).json({ deleteSistema, msg: "Sistema deletado com sucesso!" })
         } catch (error) {
             console.log(`Deu erro em: ${error}`)
+            res.status(400).send("Erro ao deletar sistema")
         }
     }
 }

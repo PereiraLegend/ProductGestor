@@ -14,6 +14,7 @@ const PostsController = {
             res.status(200).json(posts)
         } catch (error) {
             console.log(`Deu erro em: ${error}`)
+            res.status(400).send("Erro ao listar post")
         }
     },
 
@@ -23,6 +24,7 @@ const PostsController = {
             res.status(200).json(posts)
         } catch (error) {
             console.log(`Deu erro em: ${error}`)
+            res.status(400).send("Erro ao listar posts")
         }
     },
 
@@ -40,6 +42,7 @@ const PostsController = {
             res.status(201).json({ response, msg: "Post cadastrado com sucesso!" })
         } catch (error) {
             console.log(`Deu erro em: ${error}`)
+            res.status(400).send("Erro ao criar posts")
         }
     },
 
@@ -63,7 +66,8 @@ const PostsController = {
 
             res.status(200).json({ updatePost, msg: "Post atualizado com sucesso!" })
         } catch (error) {
-
+            console.log(`Erro ao atualizar o post: ${error}`)
+            res.status(400).send("Erro ao atualizar post")
         }
     },
 
@@ -79,6 +83,7 @@ const PostsController = {
             res.status(200).json({ deletePost, msg: "Post deletado com sucesso!" })
         } catch (error) {
             console.log(`Deu erro em: ${error}`)
+            res.status(400).send("Erro ao deletar post")
         }
     }
 }

@@ -11,7 +11,9 @@ const UsuarioSchema = new Schema({
         required: true,
     },
     regra: {
-        type: String, enum: ['Admin', 'Usuario'], default: 'Usuario'
+        type: String,
+        enum: ['Admin', 'Usuario'],
+        default: 'Usuario'
     },
     sistema: [{
         type: mongoose.Schema.Types.ObjectId, ref: 'Sistemas'

@@ -29,9 +29,9 @@ const UsuarioController = {
                 if (err) throw err;
                 res.json({ token });
             });
-        } catch (err) {
-            console.error(err.message);
-            res.status(500).send('Server error');
+        } catch (error) {
+            console.log(`Deu erro em: ${error}`)
+            res.status(400).send("Erro ao registrar usuário");
         }
     },
 
@@ -54,11 +54,11 @@ const UsuarioController = {
             };
             jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 360000 }, (err, token) => {
                 if (err) throw err;
-                res.json({ token });
+                res.json({ token, nome, regra: usuario.regra });
             });
-        } catch (err) {
-            console.error(err.message);
-            res.status(500).send('Erro no Servidor');
+        } catch (error) {
+            console.log(`Deu erro em ${error}`)
+            res.status(400).send("Erro ao fazer o login");
         }
     },
 
@@ -75,6 +75,7 @@ const UsuarioController = {
             res.status(200).json(usuarios)
         } catch (error) {
             console.log(`Deu erro em: ${error}`)
+            res.status(400).send("Erro ao procurar usuário")
         }
     },
 
@@ -84,6 +85,30 @@ const UsuarioController = {
             res.status(200).json(usuarios)
         } catch (error) {
             console.log(`Deu erro em: ${error}`)
+            res.status(400).send("Erro ao listar usuários")
+        }
+    },
+
+    update: async (req, res) => {
+        try {
+            const id = req.params.id
+
+            const usuario = {
+                nome: req.body.nome,
+                regra: req.body.regra,
+            }
+
+            const updateUsuario = await UsuarioModel.findByIdAndUpdate(id, usuario)
+
+            if (!updateUsuario) {
+                res.status(404).json({ msg: "Usuario não encontrado" })
+                return;
+            }
+
+            res.status(200).json({ updateUsuario, msg: "Usuario atualizado com sucesso!" })
+        } catch (error) {
+            console.log(`Deu erro em ${error}`)
+            res.status(400).send("Erro ao atualizar usuário")
         }
     },
 
@@ -99,6 +124,7 @@ const UsuarioController = {
             res.status(200).json({ deleteUsuario, msg: "Usuário deletado com sucesso!" })
         } catch (error) {
             console.log(`Deu erro em: ${error}`)
+            res.status(400).send("Erro ao deletar usuário")
         }
     }
 
