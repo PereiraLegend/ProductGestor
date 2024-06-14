@@ -4,6 +4,10 @@ const UsuarioSchema = new Schema({
     nome: {
         type: String,
         required: true,
+    },
+    email: {
+        type: String,
+        required: true,
         unique: true,
     },
     password: {
@@ -12,8 +16,8 @@ const UsuarioSchema = new Schema({
     },
     regra: {
         type: String,
-        enum: ['Admin', 'Usuario'],
-        default: 'Usuario'
+        enum: ['ADMIN', 'USER'],
+        default: 'USER'
     },
     sistema: [{
         type: mongoose.Schema.Types.ObjectId, ref: 'Sistemas'

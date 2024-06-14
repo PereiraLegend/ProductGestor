@@ -5,7 +5,7 @@ module.exports = function(req, res, next) {
   }
   
   // Checando a regra
-  if (req.usuario.regra !== 'Admin') {
+  if (req.usuario.regra !== 'ADMIN') {
     return res.status(403).json({ msg: 'Não autorizado' });
   }
   

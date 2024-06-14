@@ -4,14 +4,15 @@ const jwt = require('jsonwebtoken');
 
 const UsuarioController = {
     register: async (req, res) => {
-        const { nome, password, regra } = req.body;
+        const { nome, email, password, regra } = req.body;
         try {
-            let usuario = await UsuarioModel.findOne({ nome });
+            let usuario = await UsuarioModel.findOne({ email });
             if (usuario) {
                 return res.status(400).json({ msg: 'Usuario já existe' });
             }
             usuario = new UsuarioModel({
                 nome,
+                email,
                 password,
                 regra,
             });
@@ -36,9 +37,9 @@ const UsuarioController = {
     },
 
     login: async (req, res) => {
-        const { nome, password } = req.body;
+        const { email, password } = req.body;
         try {
-            let usuario = await UsuarioModel.findOne({ nome });
+            let usuario = await UsuarioModel.findOne({ email });
             if (!usuario) {
                 return res.status(400).json({ msg: 'Credenciais Inválidas' });
             }
@@ -50,11 +51,12 @@ const UsuarioController = {
                 usuario: {
                     id: usuario.id,
                     regra: usuario.regra,
+                    nome: usuario.nome
                 },
             };
-            jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 360000 }, (err, token) => {
-                if (err) throw err;
-                res.json({ token, nome, regra: usuario.regra });
+            jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 360000 }, (error, token) => {
+                if (error) throw error;
+                res.json({ token, email, regra: usuario.regra });
             });
         } catch (error) {
             console.log(`Deu erro em ${error}`)

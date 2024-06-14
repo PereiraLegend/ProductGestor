@@ -1,11 +1,10 @@
-"use client"
 import Image from "next/image";
-import Login from './pages/login';
-
+import Main from "./main/page";
 export default function Home() {
+
   return (
     <div>
-      <Login />
+      <Main/>
     </div>
   );
 }
