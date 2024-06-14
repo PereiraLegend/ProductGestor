@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const UsuarioController = {
     register: async (req, res) => {
-        const { nome, email, password, regra } = req.body;
+        const { nome, email, password, regra, sistema } = req.body;
         try {
             let usuario = await UsuarioModel.findOne({ email });
             if (usuario) {
@@ -15,6 +15,7 @@ const UsuarioController = {
                 email,
                 password,
                 regra,
+                sistema,
             });
             const salt = await bcrypt.genSalt(10);
             usuario.password = await bcrypt.hash(password, salt);
@@ -51,12 +52,13 @@ const UsuarioController = {
                 usuario: {
                     id: usuario.id,
                     regra: usuario.regra,
-                    nome: usuario.nome
+                    nome: usuario.nome,
+                    sistema: usuario.sistema
                 },
             };
             jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 360000 }, (error, token) => {
                 if (error) throw error;
-                res.json({ token, email, regra: usuario.regra });
+                res.json({ token, email, regra: usuario.regra, nome: usuario.nome, sistema: usuario.sistema });
             });
         } catch (error) {
             console.log(`Deu erro em ${error}`)
@@ -98,6 +100,7 @@ const UsuarioController = {
             const usuario = {
                 nome: req.body.nome,
                 regra: req.body.regra,
+                sistema: req.body.sistema
             }
 
             const updateUsuario = await UsuarioModel.findByIdAndUpdate(id, usuario)

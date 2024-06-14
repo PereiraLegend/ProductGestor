@@ -6,6 +6,7 @@ import { MdEditSquare, MdGroups } from 'react-icons/md';
 import { TbPlayerTrackNextFilled, TbPlayerTrackPrevFilled } from 'react-icons/tb';
 import { IoIosAdd } from 'react-icons/io';
 import axios from 'axios';
+import Select from 'react-select'
 
 const UsuariosAdmin = () => {
     const [dados, setDados] = useState([]);
@@ -14,6 +15,7 @@ const UsuariosAdmin = () => {
     const [ordenacao, setOrdenacao] = useState({ coluna: null, ascendente: true });
     const [isOpen, setIsOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState(null);
+    const [email, setEmail] = useState('');
     const [nome, setNome] = useState('');
     const [password, setPassword] = useState('');
     const [regra, setRegra] = useState('');
@@ -23,6 +25,9 @@ const UsuariosAdmin = () => {
     const [editNome, setEditNome] = useState('');
     const [editPassword, setEditPassword] = useState('');
     const [editRegra, setEditRegra] = useState('');
+
+    const [sistema, setSistema] = useState([])
+    const [selectSistema, setSelectSistema] = useState([])
 
     const token = document.cookie.split('; ').find(row => row.startsWith('jwt=')).split('=')[1];
 
@@ -41,13 +46,32 @@ const UsuariosAdmin = () => {
                 console.error('Erro ao buscar dados da API:', error);
                 alert('Erro ao buscar dados da API: ' + error.message);
             });
-    }, []);
+    }, [token]);
+
+    useEffect(() => {
+        axios.get('http://localhost:5001/api/sistema', {
+            headers: {
+                "authorization": `${token}`
+            }
+        })
+            .then(response => {
+                setSistema(response.data)
+            })
+            .catch((error) => {
+                console.error(error)
+            })
+    }, [token]);
+
+    const handleSistemaChange = (selectedSistema) => {
+        setSelectSistema(selectedSistema)
+    }
 
     const btnAlterar = (usuario) => {
         setUsuarioId(usuario._id);
         setEditNome(usuario.nome);
         setEditPassword(usuario.password);
         setEditRegra(usuario.regra);
+        setSelectSistema(usuario.sistema.map(sistema => ({ value: sistema, label: sistema })))
         setIsEditOpen(true);
     };
 
@@ -107,8 +131,10 @@ const UsuariosAdmin = () => {
 
         const usuarioData = {
             nome,
+            email,
             password,
-            regra
+            regra,
+            sistema: selectSistema.map((sistema) => sistema.label),
         };
 
         try {
@@ -124,8 +150,10 @@ const UsuariosAdmin = () => {
                 setDadosFiltrados([...dados, result]);
                 setIsOpen(false);
                 setNome('');
+                setEmail('');
                 setPassword('');
                 setRegra('');
+                setSelectSistema([])
                 alert('Cadastro realizado com sucesso!');
                 window.location.reload();
             } else {
@@ -143,7 +171,8 @@ const UsuariosAdmin = () => {
         const usuarioData = {
             nome: editNome,
             password: editPassword,
-            regra: editRegra
+            regra: editRegra,
+            sistema: selectSistema.map((sistema) => sistema.label),
         };
 
         try {
@@ -161,6 +190,7 @@ const UsuariosAdmin = () => {
                 setEditNome('');
                 setEditPassword('');
                 setEditRegra('');
+                setSelectSistema([]);
                 alert('Alteração realizada com sucesso!');
                 window.location.reload();
             } else {
@@ -229,17 +259,21 @@ const UsuariosAdmin = () => {
                             <tr>
                                 <th className="py-2 px-4 border-b">#</th>
                                 <th className="py-2 px-4 border-b cursor-pointer" onClick={() => funcOrdenacao('nome')}>Nome</th>
-                                <th className="py-2 px-4 border-b cursor-pointer" onClick={() => funcOrdenacao('regra')}>Regra</th>
+                                <th className="py-2 px-4 border-b cursor-pointer" onClick={() => funcOrdenacao('email')}>Email</th>
+                                <th className="py-2 px-4 border-b cursor-pointer" onClick={() => funcOrdenacao('regra')}>Tipo</th>
+                                <th className="py-2 px-4 border-b">Sistemas</th>
                                 <th className="py-2 px-4 border-b">Data Criação</th>
                                 <th className="py-2 px-4 border-b">Ações</th>
                             </tr>
                         </thead>
                         <tbody>
                             {getPaginatedData().map((usuario, index) => (
-                                <tr key={usuario._id}>
+                                <tr key={usuario._id} className='flex-row justify-evenly'>
                                     <td className="py-2 px-4 border-b">{numeroLinha(index)}</td>
                                     <td className="py-2 px-4 border-b">{usuario.nome}</td>
+                                    <td className="py-2 px-4 border-b">{usuario.email}</td>
                                     <td className="py-2 px-4 border-b">{usuario.regra}</td>
+                                    <td className="py-2 px-4 border-b">{usuario.sistema.join(', ')}</td>
                                     <td className="py-2 px-4 border-b">{new Date(usuario.createdAt).toLocaleDateString()}</td>
                                     <td className="py-2 px-4 border-b">
                                         <button className="bg-blue-500 text-white p-2 rounded mr-2" title="Editar" onClick={() => btnAlterar(usuario)}>
@@ -288,6 +322,18 @@ const UsuariosAdmin = () => {
                                     className="border p-2 rounded w-full"
                                     value={nome}
                                     onChange={e => setNome(e.target.value)}
+                                    required
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label htmlFor="email" className="block font-bold mb-2">Email</label>
+                                <input
+                                    id="email"
+                                    type="email"
+                                    className="border p-2 rounded w-full"
+                                    value={email}
+                                    onChange={e => setEmail(e.target.value)}
+                                    required
                                 />
                             </div>
                             <div className="mb-4">
@@ -298,6 +344,7 @@ const UsuariosAdmin = () => {
                                     className="border p-2 rounded w-full"
                                     value={password}
                                     onChange={e => setPassword(e.target.value)}
+                                    required
                                 />
                             </div>
                             <div className="mb-4">
@@ -307,11 +354,21 @@ const UsuariosAdmin = () => {
                                     className="border p-2 rounded w-full"
                                     value={regra}
                                     onChange={e => setRegra(e.target.value)}
+                                    required
                                 >
                                     <option value="">Selecione uma regra</option>
-                                    <option value="Usuario">Usuario</option>
-                                    <option value="Admin">Admin</option>
+                                    <option value="USER">Usuario</option>
+                                    <option value="ADMIN">Admin</option>
                                 </select>
+                            </div>
+                            <div className="mb-4">
+                                <label htmlFor="sistema" className="block font-bold mb-2">Sistemas</label>
+                                <Select
+                                    options={sistema.map((sistema) => ({ value: sistema.nome, label: sistema.nome }))}
+                                    value={selectSistema}
+                                    onChange={handleSistemaChange}
+                                    isMulti
+                                />
                             </div>
                             <div className="flex justify-between">
                                 <button
@@ -390,9 +447,18 @@ const UsuariosAdmin = () => {
                                     onChange={e => setEditRegra(e.target.value)}
                                 >
                                     <option value="">Selecione uma regra</option>
-                                    <option value="Usuario">Usuario</option>
-                                    <option value="Admin">Admin</option>
+                                    <option value="USER">Usuario</option>
+                                    <option value="ADMIN">Admin</option>
                                 </select>
+                            </div>
+                            <div className="mb-4">
+                                <label htmlFor="sistema" className="block font-bold mb-2">Sistemas</label>
+                                <Select
+                                    options={sistema.map((sistema) => ({ value: sistema.nome, label: sistema.nome }))}
+                                    value={selectSistema}
+                                    onChange={handleSistemaChange}
+                                    isMulti
+                                />
                             </div>
                             <div className="flex justify-between">
                                 <button

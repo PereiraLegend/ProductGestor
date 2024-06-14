@@ -9,6 +9,7 @@ const UsuarioSchema = new Schema({
         type: String,
         required: true,
         unique: true,
+        required: true
     },
     password: {
         type: String,
@@ -20,7 +21,9 @@ const UsuarioSchema = new Schema({
         default: 'USER'
     },
     sistema: [{
-        type: mongoose.Schema.Types.ObjectId, ref: 'Sistemas'
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Sistemas'
+        //type: Array,
     }]
 }, { timestamps: true })
 

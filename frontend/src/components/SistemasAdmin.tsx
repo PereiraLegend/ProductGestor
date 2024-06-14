@@ -157,6 +157,7 @@ const SistemasAdmin = () => {
                 setEditNome('');
                 setEditDepartamento('');
                 alert('Alteração realizada com sucesso!');
+                window.location.reload();
             } else {
                 alert('Erro ao alterar. Por favor, tente novamente.');
             }

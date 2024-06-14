@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 
 export const authOptions = {
     pages: {
-        signIn: "/login", // Página de login customizada
+        signIn: "/login",
     },
     providers: [
         CredentialsProvider({
@@ -19,7 +19,7 @@ export const authOptions = {
                 }
 
                 try {
-                    const response = await fetch("http://localhost:5001/api/usuario/login", {
+                    const response = await fetch(`${process.env.API_URL}/usuario/login`, {
                         method: "POST",
                         body: JSON.stringify({
                             email: credentials.email,
@@ -45,7 +45,7 @@ export const authOptions = {
                     cookies().set("jwt", authData.token);
                     return {
                         id: authData.id,
-                        name: authData.name,
+                        name: authData.nome,
                         email: authData.email,
                         role: authData.regra,
                     };
@@ -59,14 +59,14 @@ export const authOptions = {
     callbacks: {
         async jwt({ token, user }) {
             if (user) {
-                token.role = user.role; // Adicionar a regra ao token
+                token.role = user.role;
             }
             console.log("JWT Callback - Token:", token);
             return token;
         },
         async session({ session, token }) {
             if(token) {
-                session.user.role = token.role; // Salvar a regra na sessão
+                session.user.role = token.role;
             }
             console.log("Session Callback - Session:", session);
             return session;
@@ -74,6 +74,5 @@ export const authOptions = {
     }
 };
 
-// Exportando o NextAuth com as opções configuradas
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };

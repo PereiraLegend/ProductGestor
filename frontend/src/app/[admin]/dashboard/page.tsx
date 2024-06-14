@@ -18,7 +18,9 @@ export default async function DashboardAdmin() {
         <div>
             <CabecalhoAdmin/> 
             <div>
-            <div className='flex items-center justify-center text-xl pt-5 font-bold'>Olá, seja bem vindo(a) {session?.user?.name}!</div>
+                <div className='flex items-center justify-center text-xl pt-5 font-bold'>
+                    Olá, seja bem vindo(a) {session?.user?.name}!
+                </div>
             </div>
         </div>
     )
