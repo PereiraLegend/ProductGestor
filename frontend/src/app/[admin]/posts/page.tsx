@@ -2,6 +2,7 @@ import CabecalhoAdmin from "@/components/CabecalhoAdmin"
 import { authOptions } from '../../api/auth/[...nextauth]/route';
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
+import PostsAdmin from "@/components/PostsAdmin";
 
 export default async function postsAdmin(){
     const session = await getServerSession(authOptions)
@@ -15,6 +16,7 @@ export default async function postsAdmin(){
         <div>
             <CabecalhoAdmin/>
             <div className='flex items-center justify-center text-xl pt-5 font-bold'>Posts</div>
+            <PostsAdmin/>
         </div>
     )
 }

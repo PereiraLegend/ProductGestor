@@ -1,5 +1,5 @@
 import CabecalhoUser from "@/components/CabecalhoUser"
-import TesteSistemas from "@/components/TesteSistemas"
+//import TesteSistemas from "@/components/TesteSistemas"
 import { getServerSession } from "next-auth"
 import { redirect } from "next/navigation"
 import { authOptions } from "../api/auth/[...nextauth]/route"
@@ -15,7 +15,6 @@ export default async function dashboard() {
             <CabecalhoUser />
             <div>Olá, {session?.user?.name}</div>
             <div>Dashboard User</div>
-            <div><TesteSistemas /></div>
         </div>
     )
 }

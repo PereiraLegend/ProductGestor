@@ -21,9 +21,9 @@ const UsuarioSchema = new Schema({
         default: 'USER'
     },
     sistema: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Sistemas'
-        //type: Array,
+        // type: mongoose.Schema.Types.ObjectId,
+        // ref: 'Sistemas'
+        type: Array,
     }]
 }, { timestamps: true })
 

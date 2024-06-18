@@ -11,11 +11,12 @@ const PostSchema = new Schema({
     },
     tags: {
         type: String,
-        required: true
+        // required: true
     },
-    sistema: {
-        type: mongoose.Schema.Types.ObjectId, ref: 'Sistemas', required: true,
-    }
+    sistema: [{
+        // type: mongoose.Schema.Types.ObjectId, ref: 'Sistemas', required: true,
+        type: Array,
+    }]
 }, { timestamps: true })
 
 const Posts = mongoose.model("Posts", PostSchema)
