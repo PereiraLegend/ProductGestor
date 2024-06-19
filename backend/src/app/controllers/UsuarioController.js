@@ -93,6 +93,28 @@ const UsuarioController = {
         }
     },
 
+    getMe: async (req, res) => {
+        try {
+            const token = req.header("Authorization").replace("Bearer", "")
+            if (!token) {
+                return res.status(401).json({ msg: "Token não encontrado" })
+            }
+
+            const decoded = jwt.verify(token, process.env.JWT_SECRET)
+            if (!decoded || !decoded.usuario || !decoded.usuario.id) {
+                return res.status(401).json({ msg: "Token não fornecido ou não possui informações do usuário" })
+            }
+
+            const userId = decoded.usuario.id
+            const sistemaId = decoded.usuario.sistema
+
+            res.status(200).json({ id: userId, sistema: sistemaId })
+        } catch (error) {
+            console.log(`Deu erro em: ${error}`)
+            res.status(400).send("Erro ao buscar minhas informações")
+        }
+    },
+
     update: async (req, res) => {
         try {
             const id = req.params.id

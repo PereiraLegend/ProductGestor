@@ -333,17 +333,6 @@ const PostsAdmin = () => {
                                 />
                             </div>
                             <div className="mb-4">
-                                <label htmlFor="descricao" className="block font-bold mb-2">Descrição</label>
-                                <input
-                                    id="descricao"
-                                    type="text"
-                                    className="border p-2 rounded w-full"
-                                    value={descricao}
-                                    onChange={e => setDescricao(e.target.value)}
-                                    required
-                                />
-                            </div>
-                            <div className="mb-4">
                                 <label htmlFor="tags" className="block font-bold mb-2">Tags</label>
                                 <input
                                     id="tags"
@@ -361,6 +350,17 @@ const PostsAdmin = () => {
                                     value={selectSistema}
                                     onChange={handleSistemaChange}
                                     isMulti={false}
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label htmlFor="descricao" className="block font-bold mb-2">Descrição</label>
+                                <textarea
+                                    id="descricao"
+                                    type="text"
+                                    className="border p-2 rounded w-full h-[200px]"
+                                    value={descricao}
+                                    onChange={e => setDescricao(e.target.value)}
+                                    required
                                 />
                             </div>
                             <div className="flex justify-between">
@@ -422,22 +422,22 @@ const PostsAdmin = () => {
                                 />
                             </div>
                             <div className="mb-4">
-                                <label htmlFor="descricao" className="block font-bold mb-2">Descricao</label>
-                                <input
-                                    id="descricao"
-                                    type="descricao"
-                                    className="border p-2 rounded w-full"
-                                    value={editDescricao}
-                                    onChange={e => setEditDescricao(e.target.value)}
-                                />
-                            </div>
-                            <div className="mb-4">
                                 <label htmlFor="sistema" className="block font-bold mb-2">Sistemas</label>
                                 <Select
                                     options={sistema.map((sistema) => ({ value: sistema.nome, label: sistema.nome }))}
                                     value={selectSistema}
                                     onChange={handleSistemaChange}
                                     isMulti={false}
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label htmlFor="descricao" className="block font-bold mb-2">Descricao</label>
+                                <textarea
+                                    id="descricao"
+                                    type="descricao"
+                                    className="border p-2 rounded w-full h-[200px]"
+                                    value={editDescricao}
+                                    onChange={e => setEditDescricao(e.target.value)}
                                 />
                             </div>
                             <div className="flex justify-between">

@@ -7,6 +7,7 @@ const router = express.Router();
 router.route("/usuario/register").post((req, res) => UsuarioController.register(req, res))
 router.route("/usuario/login").post((req, res) => UsuarioController.login(req, res))
 
+router.route("/usuario/me").get(auth, (req,res) => UsuarioController.getMe(req,res))
 router.route("/usuario/all").get(auth, adminAuth, (req, res) => UsuarioController.getAll(req, res))
 router.route("/usuario/:id").get(auth, adminAuth, (req, res) => UsuarioController.getId(req, res))
 router.route("/usuario/:id").delete(auth, adminAuth, (req, res) => UsuarioController.delete(req, res))
