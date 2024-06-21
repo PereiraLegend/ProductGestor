@@ -9,6 +9,9 @@ const SistemaSchema = new Schema({
     descricao: {
         type: String,
         required: true
+    },
+    documentacaoAr: {
+        type: String,
     }
 }, { timestamps: true })
 

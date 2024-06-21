@@ -12,6 +12,8 @@ conexao()
 
 const routes = require("./app/routes/router")
 
+app.use("/documents", routes)
+
 app.use("/api", routes)
 
 app.listen(PORT, () => {

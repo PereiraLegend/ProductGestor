@@ -1,4 +1,5 @@
 const { Sistemas: SistemaModel } = require("../models/SistemaModel")
+const path = require('path');
 
 const SistemaController = {
     getId: async (req, res) => {
@@ -30,9 +31,13 @@ const SistemaController = {
 
     create: async (req, res) => {
         try {
-            const sistemas = {
+
+            const file = req.file
+
+            const sistemas ={
                 nome: req.body.nome,
                 descricao: req.body.descricao,
+                documentacaoAr: file.path,
             }
 
             const response = await SistemaModel.create(sistemas)
@@ -51,6 +56,7 @@ const SistemaController = {
             const sistema = {
                 nome: req.body.nome,
                 descricao: req.body.descricao,
+                documentacaoAr: req.body.documentacaoAr
             }
 
             const updateSistema = await SistemaModel.findByIdAndUpdate(id, sistema)
