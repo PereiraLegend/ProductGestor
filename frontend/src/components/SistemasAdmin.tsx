@@ -19,11 +19,14 @@ const SistemasAdmin = () => {
     const [itemToDelete, setItemToDelete] = useState(null);
     const [nome, setNome] = useState('');
     const [departamento, setDepartamento] = useState('');
+    const [arquivo, setArquivo] = useState(null)
     const [atualPage, setAtualPage] = useState(1);
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [sistemaId, setSistemaId] = useState(null);
     const [editNome, setEditNome] = useState('');
     const [editDepartamento, setEditDepartamento] = useState('');
+    const [editArquivo, setEditArquivo] = useState(null)
+    
 
     const token = document.cookie.split('; ').find(row => row.startsWith('jwt=')).split('=')[1];
 
@@ -105,10 +108,16 @@ const SistemasAdmin = () => {
     const EnviarFormulario = async (e) => {
         e.preventDefault();
 
-        const sistemaData = {
-            nome,
-            descricao: departamento
-        };
+        // const sistemaData = {
+        //     nome,
+        //     descricao: departamento,
+        //     arquivo: arquivo
+        // };
+
+        const sistemaData = new FormData();
+        sistemaData.append('nome', nome);
+        sistemaData.append('descricao', departamento);
+        sistemaData.append('documentacaoAr', arquivo); 
 
         try {
             const response = await axios.post('http://localhost:5001/api/sistema', sistemaData, {
@@ -124,6 +133,7 @@ const SistemasAdmin = () => {
                 setIsOpen(false);
                 setNome('');
                 setDepartamento('');
+                setArquivo(null)
                 alert('Cadastro realizado com sucesso!');
                 window.location.reload();
             } else {
@@ -138,10 +148,16 @@ const SistemasAdmin = () => {
     const AlterarFormulario = async (e) => {
         e.preventDefault();
 
-        const sistemaData = {
-            nome: editNome,
-            descricao: editDepartamento
-        };
+        // const sistemaData = {
+        //     nome: editNome,
+        //     descricao: editDepartamento,
+        //     arquivo: editArquivo
+        // };
+
+        const sistemaData = new FormData();
+        sistemaData.append('nome', editNome);
+        sistemaData.append('descricao', editDepartamento);
+        sistemaData.append('documentacaoAr', editArquivo); 
 
         try {
             const response = await axios.put(`http://localhost:5001/api/sistema/${sistemaId}`, sistemaData, {
@@ -157,6 +173,7 @@ const SistemasAdmin = () => {
                 setIsEditOpen(false);
                 setEditNome('');
                 setEditDepartamento('');
+                setEditArquivo(null)
                 alert('Alteração realizada com sucesso!');
                 window.location.reload();
             } else {
@@ -296,6 +313,16 @@ const SistemasAdmin = () => {
                                     onChange={e => setDepartamento(e.target.value)}
                                 />
                             </div>
+                            <div className="mb-4">
+                                <label htmlFor="arquivo" className="block font-bold mb-2">Documentação Arquivo</label>
+                                <input
+                                    id="arquivo"
+                                    type="file"
+                                    className="border p-2 rounded w-full"
+                                    //value={arquivo}
+                                    onChange={e => setArquivo(e.target.files[0])}
+                                />
+                            </div>
                             <div className="flex justify-between">
                                 <button
                                     type="button"
@@ -317,7 +344,7 @@ const SistemasAdmin = () => {
             )}
 
             {itemToDelete && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50d">
                     <div className="bg-white p-8 rounded shadow-md">
                         <h2 className="text-xl mb-4">Confirmação</h2>
                         <p>Tem certeza de que deseja excluir este item?</p>
@@ -363,6 +390,19 @@ const SistemasAdmin = () => {
                                     value={editDepartamento}
                                     onChange={e => setEditDepartamento(e.target.value)}
                                 />
+                            </div>
+                            <div className="mb-4">
+                                <label htmlFor="arquivo" className="block font-bold mb-2">Documentação Arquivo</label>
+                                <input
+                                    id="arquivo"
+                                    type="file"
+                                    className="border p-2 rounded w-full"
+                                    //value={editArquivo}
+                                    onChange={e => setEditArquivo(e.target.files[0])}
+                                />
+                                {arquivoAtual && (
+                                    <p className="mt-2 text-sm text-gray-600">Arquivo atual: {arquivoAtual}</p>
+                                )}
                             </div>
                             <div className="flex justify-between">
                                 <button
