@@ -26,7 +26,8 @@ const SistemasAdmin = () => {
     const [editNome, setEditNome] = useState('');
     const [editDepartamento, setEditDepartamento] = useState('');
     const [editArquivo, setEditArquivo] = useState(null)
-    
+    const [arquivoAtual, setArquivoAtual] = useState(null)
+
 
     const token = document.cookie.split('; ').find(row => row.startsWith('jwt=')).split('=')[1];
 
@@ -51,6 +52,7 @@ const SistemasAdmin = () => {
         setSistemaId(sistema._id)
         setEditNome(sistema.nome);
         setEditDepartamento(sistema.descricao);
+        setArquivoAtual(sistema.documentacaoAr);
         setIsEditOpen(true);
     };
 
@@ -70,6 +72,30 @@ const SistemasAdmin = () => {
                 alert(`Erro ao deletar item com ID ${id}: ` + error.message);
             });
     };
+
+    const handleDownload = (id) => {
+        axios.get(`http://localhost:5001/api/sistema/${id}/download`, {
+            headers: {
+                "authorization": `${token}`
+            },
+            responseType: 'blob' // Isso é necessário para lidar com a resposta do arquivo
+        })
+            .then(response => {
+                // Cria um link temporário para o download do arquivo
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', `documento.pdf`); // Nome do arquivo a ser baixado
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            })
+            .catch(error => {
+                console.error(`Erro ao baixar o arquivo do sistema com ID ${id}:`, error);
+                alert(`Erro ao baixar o arquivo do sistema com ID ${id}: ` + error.message);
+            });
+    };
+
 
     const btnDelete = (id) => {
         setItemToDelete(id);
@@ -117,7 +143,7 @@ const SistemasAdmin = () => {
         const sistemaData = new FormData();
         sistemaData.append('nome', nome);
         sistemaData.append('descricao', departamento);
-        sistemaData.append('documentacaoAr', arquivo); 
+        sistemaData.append('documentacaoAr', arquivo);
 
         try {
             const response = await axios.post('http://localhost:5001/api/sistema', sistemaData, {
@@ -157,7 +183,7 @@ const SistemasAdmin = () => {
         const sistemaData = new FormData();
         sistemaData.append('nome', editNome);
         sistemaData.append('descricao', editDepartamento);
-        sistemaData.append('documentacaoAr', editArquivo); 
+        sistemaData.append('documentacaoAr', editArquivo);
 
         try {
             const response = await axios.put(`http://localhost:5001/api/sistema/${sistemaId}`, sistemaData, {
@@ -301,6 +327,7 @@ const SistemasAdmin = () => {
                                     className="border p-2 rounded w-full"
                                     value={nome}
                                     onChange={e => setNome(e.target.value)}
+                                    required
                                 />
                             </div>
                             <div className="mb-4">
@@ -311,6 +338,7 @@ const SistemasAdmin = () => {
                                     className="border p-2 rounded w-full"
                                     value={departamento}
                                     onChange={e => setDepartamento(e.target.value)}
+                                    required
                                 />
                             </div>
                             <div className="mb-4">
@@ -321,6 +349,7 @@ const SistemasAdmin = () => {
                                     className="border p-2 rounded w-full"
                                     //value={arquivo}
                                     onChange={e => setArquivo(e.target.files[0])}
+                                    required
                                 />
                             </div>
                             <div className="flex justify-between">
@@ -401,7 +430,11 @@ const SistemasAdmin = () => {
                                     onChange={e => setEditArquivo(e.target.files[0])}
                                 />
                                 {arquivoAtual && (
-                                    <p className="mt-2 text-sm text-gray-600">Arquivo atual: {arquivoAtual}</p>
+                                    <div className="mt-2">
+                                        <div onClick={() => handleDownload(sistemaId)} className="text-blue-500 hover:underline cursor-pointer">
+                                            Baixar arquivo atual
+                                        </div>
+                                    </div>
                                 )}
                             </div>
                             <div className="flex justify-between">
