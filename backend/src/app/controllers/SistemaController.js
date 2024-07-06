@@ -30,6 +30,22 @@ const SistemaController = {
         }
     },
 
+    getIdByName: async (req,res) => {
+        try {
+            const { nome } = req.params;
+            const sistema = await SistemaModel.findOne({ nome });
+
+            if (!sistema) {
+                return res.status(404).json({ msg: "Sistema não encontrado!" });
+            }
+
+            res.status(200).json({ id: sistema._id });
+        } catch (error) {
+            console.error(`Erro ao buscar ID do sistema pelo nome: ${error}`);
+            res.status(400).send("Erro ao buscar ID do sistema pelo nome");
+        }
+    },
+
     create: async (req, res) => {
         try {
 

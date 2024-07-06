@@ -35,16 +35,16 @@ export default function CabecalhoAdmin() {
             <div className="flex">
                 {/**Menu Lateral */}
                 <div className={`w-[15%] h-[100%] text-white text-lg bg-[#4F46E5] absolute ${isMenuOpen ? 'block' : 'hidden'}`}>
-                    <div className="cursor-pointer bg-[#4F46E5] hover:bg-gray-300 p-1 rounded-lg m-1" onClick={() => navegacao('/')}>
+                    <div className="cursor-pointer bg-[#4F46E5] hover:bg-gray-300 p-1 rounded-lg m-1" onClick={() => navegacao('/dashboard')}>
                         Home
                     </div>
-                    <div className="cursor-pointer bg-[#4F46E5] hover:bg-gray-300 p-1 rounded-lg m-1" onClick={() => navegacao('/')}>
+                    <div className="cursor-pointer bg-[#4F46E5] hover:bg-gray-300 p-1 rounded-lg m-1" onClick={() => navegacao('/dashboard')}>
                         Posts
                     </div>
-                    <div className="cursor-pointer bg-[#4F46E5] hover:bg-gray-300 p-1 rounded-lg m-1" onClick={() => navegacao('/')}>
+                    <div className="cursor-pointer bg-[#4F46E5] hover:bg-gray-300 p-1 rounded-lg m-1" onClick={() => navegacao('/dashboard')}>
                         Sistemas
                     </div>
-                    <div className="cursor-pointer bg-[#4F46E5] hover:bg-gray-300 p-1 rounded-lg m-1" onClick={() => navegacao('/')}>
+                    <div className="cursor-pointer bg-[#4F46E5] hover:bg-gray-300 p-1 rounded-lg m-1" onClick={() => navegacao('/dashboard')}>
                         Usuários
                     </div>
                 </div>
