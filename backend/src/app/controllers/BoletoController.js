@@ -72,6 +72,7 @@ const BoletoController = {
             const id = req.params.id;
 
             let boleto = {
+                titulo: req.body.titulo,
                 vencimento: req.body.vencimento,
                 usuario: req.body.usuario,
             };

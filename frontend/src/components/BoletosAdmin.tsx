@@ -16,17 +16,20 @@ const BoletosAdmin = () => {
     const [dadosFiltrados, setDadosFiltrados] = useState([]);
     const [ordenacao, setOrdenacao] = useState({ coluna: null, ascendente: true });
     const [isOpen, setIsOpen] = useState(false);
+    const [atualPage, setAtualPage] = useState(1);
     const [itemToDelete, setItemToDelete] = useState(null);
     const [titulo, setTitulo] = useState('');
     const [vencimento, setVencimento] = useState('');
     const [arquivo, setArquivo] = useState(null)
-    const [atualPage, setAtualPage] = useState(1);
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [boletoId, setBoletoId] = useState(null);
     const [editTitulo, setEditTitulo] = useState('');
     const [editVencimento, setEditVencimento] = useState('');
     const [editArquivo, setEditArquivo] = useState(null)
+    //const [editUsuario, setEditUsuario] = useState([])
     const [arquivoAtual, setArquivoAtual] = useState(null)
+    
+
     const [usuario, setUsuario] = useState([])
     const [selectUsuario, setSelectUsuario] = useState(null)
 
@@ -68,16 +71,17 @@ const BoletosAdmin = () => {
         setSelectUsuario(selectedUsuario)
     }
 
-    const btnAlterar = (sistema) => {
-        setSistemaId(sistema._id)
-        setEditNome(sistema.nome);
-        setEditDepartamento(sistema.descricao);
-        setArquivoAtual(sistema.documentacaoAr);
+    const btnAlterar = (boleto) => {
+        setBoletoId(boleto._id)
+        setEditTitulo(boleto.titulo);
+        setEditVencimento(boleto.vencimento);
+        setArquivoAtual(boleto.boletoAr);
+        setSelectUsuario(boleto.usuario ? { value: boleto.usuario, label: boleto.usuario } : null)
         setIsEditOpen(true);
     };
 
     const btnDeletar = (id) => {
-        axios.delete(`http://localhost:5001/api/sistema/${id}`, {
+        axios.delete(`http://localhost:5001/api/boleto/${id}`, {
             headers: {
                 "authorization": `${token}`
             }
@@ -94,7 +98,7 @@ const BoletosAdmin = () => {
     };
 
     const handleDownload = (id) => {
-        axios.get(`http://localhost:5001/api/sistema/${id}/download`, {
+        axios.get(`http://localhost:5001/api/boleto/${id}/download`, {
             headers: {
                 "authorization": `${token}`
             },
@@ -105,14 +109,14 @@ const BoletosAdmin = () => {
                 const url = window.URL.createObjectURL(new Blob([response.data]));
                 const link = document.createElement('a');
                 link.href = url;
-                link.setAttribute('download', `documento.pdf`); // Nome do arquivo a ser baixado
+                link.setAttribute('download', `boleto.pdf`); // Nome do arquivo a ser baixado
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
             })
             .catch(error => {
-                console.error(`Erro ao baixar o arquivo do sistema com ID ${id}:`, error);
-                alert(`Erro ao baixar o arquivo do sistema com ID ${id}: ` + error.message);
+                console.error(`Erro ao baixar o boleto do sistema com ID ${id}:`, error);
+                alert(`Erro ao baixar o boleto do sistema com ID ${id}: ` + error.message);
             });
     };
 
@@ -125,8 +129,9 @@ const BoletosAdmin = () => {
         const valorFiltro = event.target.value;
         setFiltro(valorFiltro);
         const dadosFiltrados = dados.filter(item =>
-            item.nome.toLowerCase().includes(valorFiltro.toLowerCase()) ||
-            item.descricao.toLowerCase().includes(valorFiltro.toLowerCase())
+            item.titulo.toLowerCase().includes(valorFiltro.toLowerCase()) ||
+            item.vencimento.toLowerCase().includes(valorFiltro.toLowerCase()) ||
+            item.usuario[0][0].toLowerCase().includes(valorFiltro.toLowerCase())
         );
         setDadosFiltrados(dadosFiltrados);
     };
@@ -154,16 +159,10 @@ const BoletosAdmin = () => {
     const EnviarFormulario = async (e) => {
         e.preventDefault();
 
-        // const sistemaData = {
-        //     nome,
-        //     descricao: departamento,
-        //     arquivo: arquivo
-        // };
-
         const usuarioData = new FormData();
         usuarioData.append('titulo', titulo);
         usuarioData.append('vencimento', vencimento);
-        usuarioData.append('usuario', usuario)
+        usuarioData.append('usuario', selectUsuario ? selectUsuario.value : null);
         usuarioData.append('boletoAr', arquivo);
 
         try {
@@ -179,6 +178,7 @@ const BoletosAdmin = () => {
                 setDadosFiltrados([...dados, result]);
                 setIsOpen(false);
                 setTitulo('');
+                setSelectUsuario(null);
                 setVencimento('');
                 setArquivo(null)
                 alert('Cadastro realizado com sucesso!');
@@ -195,21 +195,14 @@ const BoletosAdmin = () => {
     const AlterarFormulario = async (e) => {
         e.preventDefault();
 
-        // const sistemaData = {
-        //     nome: editNome,
-        //     descricao: editDepartamento,
-        //     arquivo: editArquivo
-        // };
-
-        const sistemaData = new
-        
-         FormData();
-        sistemaData.append('nome', editNome);
-        sistemaData.append('descricao', editDepartamento);
-        sistemaData.append('documentacaoAr', editArquivo);
+        const usuarioData = new FormData();
+        usuarioData.append('titulo', editTitulo);
+        usuarioData.append('vencimento', editVencimento);
+        usuarioData.append('usuario', selectUsuario ? selectUsuario.value : null);
+        usuarioData.append('boletoAr', editArquivo);
 
         try {
-            const response = await axios.put(`http://localhost:5001/api/sistema/${sistemaId}`, sistemaData, {
+            const response = await axios.put(`http://localhost:5001/api/boleto/${boletoId}`, usuarioData, {
                 headers: {
                     "authorization": `${token}`
                 }
@@ -217,12 +210,13 @@ const BoletosAdmin = () => {
 
             if (response.status === 200) {
                 const result = response.data;
-                setDados(prevData => prevData.map(item => (item._id === sistemaId ? { ...item, ...result } : item)));
-                setDadosFiltrados(prevData => prevData.map(item => (item._id === sistemaId ? { ...item, ...result } : item)));
+                setDados(prevData => prevData.map(item => (item._id === boletoId ? { ...item, ...result } : item)));
+                setDadosFiltrados(prevData => prevData.map(item => (item._id === boletoId ? { ...item, ...result } : item)));
                 setIsEditOpen(false);
-                setEditNome('');
-                setEditDepartamento('');
-                setEditArquivo(null)
+                setEditTitulo('');
+                setEditVencimento('');
+                setSelectUsuario(null);
+                setEditArquivo(null);
                 alert('Alteração realizada com sucesso!');
                 window.location.reload();
             } else {
@@ -267,10 +261,10 @@ const BoletosAdmin = () => {
                             value={filtro}
                             onChange={handleFiltroChange}
                         />
-                        <button className="bg-[#4F46E5] text-white p-4 rounded mr-2" title="Ordenar por Nome" onClick={() => funcOrdenacao('nome')}>
+                        <button className="bg-[#4F46E5] text-white p-4 rounded mr-2" title="Ordenar por Titulo" onClick={() => funcOrdenacao('titulo')}>
                             <FaArrowDown />
                         </button>
-                        <button className="bg-[#4F46E5] text-white p-4 rounded" title="Ordenar por Departamento" onClick={() => funcOrdenacao('descricao')}>
+                        <button className="bg-[#4F46E5] text-white p-4 rounded" title="Ordenar por Usuário" onClick={() => funcOrdenacao('usuario')}>
                             <MdGroups />
                         </button>
                     </div>
@@ -292,8 +286,8 @@ const BoletosAdmin = () => {
                                 <th className="py-2 px-4 border-b">#</th>
                                 <th className="py-2 px-4 border-b cursor-pointer" onClick={() => funcOrdenacao('titulo')}>Titulo</th>
                                 <th className="py-2 px-4 border-b cursor-pointer" onClick={() => funcOrdenacao('vencimento')}>Vencimento</th>
-                                <th className="py-2 px-4 border-b cursor-pointer">Usuario</th>
-                                <th className="py-2 px-4 border-b cursor-pointer">Data Criação</th>
+                                <th className="py-2 px-4 border-b cursor-pointer" onClick={() => funcOrdenacao('usuario')}>Usuario</th>
+                                <th className="py-2 px-4 border-b cursor-pointer" >Data Criação</th>
                                 <th className="py-2 px-4 border-b">Ações</th>
                             </tr>
                         </thead>
@@ -306,10 +300,10 @@ const BoletosAdmin = () => {
                                     <td className="py-2 px-4 border-b">{boleto.usuario}</td>
                                     <td className="py-2 px-4 border-b">{new Date(boleto.createdAt).toLocaleDateString()}</td>
                                     <td className="py-2 px-4 border-b">
-                                        <button className="bg-blue-500 text-white p-2 rounded mr-2" title="Editar" onClick={() => btnAlterar(sistema)}>
+                                        <button className="bg-blue-500 text-white p-2 rounded mr-2" title="Editar" onClick={() => btnAlterar(boleto)}>
                                             <MdEditSquare />
                                         </button>
-                                        <button className="bg-red-500 text-white p-2 rounded" title="Deletar" onClick={() => btnDelete(sistema._id)}>
+                                        <button className="bg-red-500 text-white p-2 rounded" title="Deletar" onClick={() => btnDelete(boleto._id)}>
                                             <FaTrash />
                                         </button>
                                     </td>
@@ -373,6 +367,7 @@ const BoletosAdmin = () => {
                                     value={selectUsuario}
                                     onChange={handleUsuarioChange}
                                     isMulti={false}
+                                    required
                                 />
                             </div>
                             <div className="mb-4">
@@ -435,23 +430,33 @@ const BoletosAdmin = () => {
                         <h2 className="text-xl mb-4">Editar Sistema</h2>
                         <form onSubmit={AlterarFormulario}>
                             <div className="mb-4">
-                                <label htmlFor="nome" className="block font-bold mb-2">Nome</label>
+                                <label htmlFor="titulo" className="block font-bold mb-2">Título</label>
                                 <input
-                                    id="nome"
+                                    id="titulo"
                                     type="text"
                                     className="border p-2 rounded w-full"
-                                    value={editNome}
-                                    onChange={e => setEditNome(e.target.value)}
+                                    value={editTitulo}
+                                    onChange={e => setEditTitulo(e.target.value)}
                                 />
                             </div>
                             <div className="mb-4">
-                                <label htmlFor="descricao" className="block font-bold mb-2">Descrição</label>
+                                <label htmlFor="vencimento" className="block font-bold mb-2">Vencimento</label>
                                 <input
-                                    id="descricao"
-                                    type="text"
+                                    id="vencimento"
+                                    type="date"
                                     className="border p-2 rounded w-full"
-                                    value={editDepartamento}
-                                    onChange={e => setEditDepartamento(e.target.value)}
+                                    value={editVencimento}
+                                    onChange={e => setEditVencimento(e.target.value)}
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label htmlFor="usuario" className="block font-bold mb-2">Usuário</label>
+                                <Select
+                                    options={usuario.map((usuario) => ({ value: usuario.nome, label: usuario.nome }))}
+                                    value={selectUsuario}
+                                    onChange={handleUsuarioChange}
+                                    isMulti={false}
+                                    required
                                 />
                             </div>
                             <div className="mb-4">
@@ -465,7 +470,7 @@ const BoletosAdmin = () => {
                                 />
                                 {arquivoAtual && (
                                     <div className="mt-2">
-                                        <div onClick={() => handleDownload(sistemaId)} className="text-blue-500 hover:underline cursor-pointer">
+                                        <div onClick={() => handleDownload(boletoId)} className="text-blue-500 hover:underline cursor-pointer">
                                             Baixar arquivo atual
                                         </div>
                                     </div>

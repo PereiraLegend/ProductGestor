@@ -4,7 +4,6 @@ const BoletoSchema = new Schema({
     titulo: {
         type: String,
         required: true,
-        unique: true
     },
     vencimento: {
         type: String,
