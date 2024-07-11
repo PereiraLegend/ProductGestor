@@ -8,6 +8,7 @@ const UsuariosCliente = () => {
     const [sistema, setSistema] = useState([]);
     const [dadosPost, setDadosPost] = useState([]);
     const [postsFiltrados, setPostsFiltrados] = useState([]);
+    const [boletos, setBoletos] = useState([])
 
     const token = document.cookie.split('; ').find(row => row.startsWith('jwt=')).split('=')[1];
 
@@ -23,6 +24,21 @@ const UsuariosCliente = () => {
             const sistemas = response.data.sistema.flat();
             setSistema(sistemas || []);
             console.log("Sistemas do usuário:", sistemas);
+
+            const nomeUsuario = response.data.nome
+            axios.get(`http://localhost:5001/api/boleto/usuario/${nomeUsuario}`, {
+                headers: {
+                    "authorization": `${token}`
+                }
+            })
+            .then(response => {
+                console.log("Boletos do usuário:", response.data);
+                setBoletos(response.data);
+            })
+            .catch(error => {
+                console.error(`Erro ao buscar boletos do usuário: ${error}`);
+            });
+
         })
         .catch(error => {
             console.error(`Erro ao buscar dados da API: ${error}`);
@@ -95,6 +111,41 @@ const UsuariosCliente = () => {
         }
     };
 
+    const handleDownloadBoleto = async (boletoId, boletoVencimento, boletoTitulo) => {
+        try {
+            const downloadResponse = await axios.get(`http://localhost:5001/api/boleto/${boletoId}/download`, {
+                headers: {
+                    "authorization": `${token}`
+                },
+                responseType: 'blob'
+            });
+
+            const url = window.URL.createObjectURL(new Blob([downloadResponse.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `${boletoTitulo}-${boletoVencimento}.pdf`); // Nome do arquivo de download
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (error) {
+            console.error(`Erro ao baixar boleto: ${error}`);
+            alert(`Erro ao baixar boleto: ${error.message}`);
+        }
+    };
+
+    const getStatusCor = (status) => {
+        switch (status) {
+            case 'PENDENTE':
+                return '#EF9B0F';
+            case 'PAGO':
+                return 'green';
+            case 'VENCIDO':
+                return 'red';
+            default:
+                return 'black';
+        }
+    };
+
     return (
         <div>
             <div className="bg-blue-300 p-2 rounded-lg mt-4">
@@ -136,11 +187,41 @@ const UsuariosCliente = () => {
                 </div>
 
                 <div className="bg-yellow-200 p-2 rounded-lg mt-4 w-[49%]">
-                    <div className="font-bold">
+                    <div className="font-bold text-2xl pb-2">
                         Boletos:
                     </div>
-                    <div>
-                        Boletos...
+                    <div className="">
+                    {boletos.length > 0 ? (
+                            <table className="w-[100%]">
+                                <thead className="">
+                                    <tr>
+                                        <th>Título</th>
+                                        <th>Vencimento</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="">
+                                    {boletos.map((boleto, index) => (
+                                        <tr key={index} className="flex-row justify-center items-center">
+                                            <td className="flex-row justify-center">{boleto.titulo}</td>
+                                            <td className="flex-row justify-center" >{new Date(boleto.vencimento).toLocaleDateString()}</td>
+                                            <td className="flex-row justify-center" style= {{ color: getStatusCor(boleto.status) }}>{boleto.status}</td>
+                                            <td>
+                                                <button 
+                                                    onClick={() => handleDownloadBoleto(boleto._id, boleto.vencimento, boleto.titulo)}
+                                                    className="bg-blue-500 text-white p-1 rounded"
+                                                >
+                                                    Baixar
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        ) : (
+                            <div>Nenhum boleto encontrado</div>
+                        )}
                     </div>
                 </div>
             </div>

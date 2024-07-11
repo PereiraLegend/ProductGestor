@@ -107,8 +107,9 @@ const UsuarioController = {
 
             const userId = decoded.usuario.id
             const sistemaId = decoded.usuario.sistema
+            const nomeId = decoded.usuario.nome
 
-            res.status(200).json({ id: userId, sistema: sistemaId })
+            res.status(200).json({ id: userId, sistema: sistemaId, nome: nomeId })
         } catch (error) {
             console.log(`Deu erro em: ${error}`)
             res.status(400).send("Erro ao buscar minhas informações")

@@ -1,6 +1,7 @@
 const { Boletos: BoletoModel } = require("../models/BoletoModel")
 const path = require('path');
-const fs = require('fs')
+const fs = require('fs');
+const { response } = require("express");
 
 const BoletoController = {
     getId: async (req, res) => {
@@ -30,16 +31,16 @@ const BoletoController = {
         }
     },
 
-    getIdByName: async (req,res) => {
+    getBoletosByUser: async (req,res) => {
         try {
-            const { titulo } = req.params;
-            const boleto = await BoletoModel.findOne({ titulo });
+            const { usuario } = req.params;
+            const boleto = await BoletoModel.find({ usuario });
 
-            if (!boleto) {
+            if (!boleto || boleto.length == 0 ) {
                 return res.status(404).json({ msg: "Boleto não encontrado!" });
             }
 
-            res.status(200).json({ id: boleto._id });
+            res.status(200).json(boleto);
         } catch (error) {
             console.error(`Erro ao buscar ID do boleto pelo nome: ${error}`);
             res.status(400).send("Erro ao buscar ID do boleto pelo nome");
@@ -55,6 +56,7 @@ const BoletoController = {
                 titulo: req.body.titulo,
                 vencimento: req.body.vencimento,
                 usuario: req.body.usuario,
+                status: req.body.status,
                 boletoAr: file.path,
             }
 
@@ -75,6 +77,7 @@ const BoletoController = {
                 titulo: req.body.titulo,
                 vencimento: req.body.vencimento,
                 usuario: req.body.usuario,
+                status: req.body.status
             };
 
             // Verifica se há um novo arquivo para ser atualizado

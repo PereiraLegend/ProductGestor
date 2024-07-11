@@ -20,10 +20,12 @@ const BoletosAdmin = () => {
     const [itemToDelete, setItemToDelete] = useState(null);
     const [titulo, setTitulo] = useState('');
     const [vencimento, setVencimento] = useState('');
+    const [status, setStatus] = useState('');
     const [arquivo, setArquivo] = useState(null)
-    const [isEditOpen, setIsEditOpen] = useState(false);
     const [boletoId, setBoletoId] = useState(null);
+    const [isEditOpen, setIsEditOpen] = useState(false);
     const [editTitulo, setEditTitulo] = useState('');
+    const [editStatus, setEditStatus] = useState('');
     const [editVencimento, setEditVencimento] = useState('');
     const [editArquivo, setEditArquivo] = useState(null)
     //const [editUsuario, setEditUsuario] = useState([])
@@ -75,6 +77,7 @@ const BoletosAdmin = () => {
         setBoletoId(boleto._id)
         setEditTitulo(boleto.titulo);
         setEditVencimento(boleto.vencimento);
+        setEditStatus(boleto.status)
         setArquivoAtual(boleto.boletoAr);
         setSelectUsuario(boleto.usuario ? { value: boleto.usuario, label: boleto.usuario } : null)
         setIsEditOpen(true);
@@ -163,6 +166,7 @@ const BoletosAdmin = () => {
         usuarioData.append('titulo', titulo);
         usuarioData.append('vencimento', vencimento);
         usuarioData.append('usuario', selectUsuario ? selectUsuario.value : null);
+        usuarioData.append('status', status)
         usuarioData.append('boletoAr', arquivo);
 
         try {
@@ -180,7 +184,8 @@ const BoletosAdmin = () => {
                 setTitulo('');
                 setSelectUsuario(null);
                 setVencimento('');
-                setArquivo(null)
+                setStatus('');
+                setArquivo(null);
                 alert('Cadastro realizado com sucesso!');
                 window.location.reload();
             } else {
@@ -199,6 +204,7 @@ const BoletosAdmin = () => {
         usuarioData.append('titulo', editTitulo);
         usuarioData.append('vencimento', editVencimento);
         usuarioData.append('usuario', selectUsuario ? selectUsuario.value : null);
+        usuarioData.append('status', editStatus)
         usuarioData.append('boletoAr', editArquivo);
 
         try {
@@ -216,6 +222,7 @@ const BoletosAdmin = () => {
                 setEditTitulo('');
                 setEditVencimento('');
                 setSelectUsuario(null);
+                setEditStatus("");
                 setEditArquivo(null);
                 alert('Alteração realizada com sucesso!');
                 window.location.reload();
@@ -247,6 +254,19 @@ const BoletosAdmin = () => {
 
     const numeroLinha = (index) => {
         return (atualPage - 1) * itemsPorPage + index + 1;
+    };
+
+    const getStatusCor = (status) => {
+        switch (status) {
+            case 'PENDENTE':
+                return '#EF9B0F';
+            case 'PAGO':
+                return 'green';
+            case 'VENCIDO':
+                return 'red';
+            default:
+                return 'black';
+        }
     };
 
     return (
@@ -285,8 +305,9 @@ const BoletosAdmin = () => {
                             <tr>
                                 <th className="py-2 px-4 border-b">#</th>
                                 <th className="py-2 px-4 border-b cursor-pointer" onClick={() => funcOrdenacao('titulo')}>Titulo</th>
-                                <th className="py-2 px-4 border-b cursor-pointer" onClick={() => funcOrdenacao('vencimento')}>Vencimento</th>
                                 <th className="py-2 px-4 border-b cursor-pointer" onClick={() => funcOrdenacao('usuario')}>Usuario</th>
+                                <th className="py-2 px-4 border-b cursor-pointer" onClick={() => funcOrdenacao('vencimento')}>Vencimento</th>
+                                <th className="py-2 px-4 border-b cursor-pointer" onClick={() => funcOrdenacao('usuario')}>Status</th>
                                 <th className="py-2 px-4 border-b cursor-pointer" >Data Criação</th>
                                 <th className="py-2 px-4 border-b">Ações</th>
                             </tr>
@@ -296,8 +317,9 @@ const BoletosAdmin = () => {
                                 <tr key={boleto._id}>
                                     <td className="py-2 px-4 border-b">{numeroLinha(index)}</td>
                                     <td className="py-2 px-4 border-b">{boleto.titulo}</td>
-                                    <td className="py-2 px-4 border-b">{boleto.vencimento}</td>
                                     <td className="py-2 px-4 border-b">{boleto.usuario}</td>
+                                    <td className="py-2 px-4 border-b">{boleto.vencimento}</td>
+                                    <td className="py-2 px-4 border-b" style= {{ color: getStatusCor(boleto.status) }}>{boleto.status}</td>
                                     <td className="py-2 px-4 border-b">{new Date(boleto.createdAt).toLocaleDateString()}</td>
                                     <td className="py-2 px-4 border-b">
                                         <button className="bg-blue-500 text-white p-2 rounded mr-2" title="Editar" onClick={() => btnAlterar(boleto)}>
@@ -350,6 +372,16 @@ const BoletosAdmin = () => {
                                 />
                             </div>
                             <div className="mb-4">
+                                <label htmlFor="usuario" className="block font-bold mb-2">Usuário</label>
+                                <Select
+                                    options={usuario.map((usuario) => ({ value: usuario.nome, label: usuario.nome }))}
+                                    value={selectUsuario}
+                                    onChange={handleUsuarioChange}
+                                    isMulti={false}
+                                    required
+                                />
+                            </div>
+                            <div className="mb-4">
                                 <label htmlFor="vencimento" className="block font-bold mb-2">Vencimento</label>
                                 <input
                                     id="vencimento"
@@ -361,14 +393,19 @@ const BoletosAdmin = () => {
                                 />
                             </div>
                             <div className="mb-4">
-                                <label htmlFor="usuario" className="block font-bold mb-2">Usuário</label>
-                                <Select
-                                    options={usuario.map((usuario) => ({ value: usuario.nome, label: usuario.nome }))}
-                                    value={selectUsuario}
-                                    onChange={handleUsuarioChange}
-                                    isMulti={false}
+                                <label htmlFor="regra" className="block font-bold mb-2">Status</label>
+                                <select
+                                    id="regra"
+                                    className="border p-2 rounded w-full"
+                                    value={status}
+                                    onChange={e => setStatus(e.target.value)}
                                     required
-                                />
+                                >
+                                    <option value="">Status</option>
+                                    <option value="PENDENTE">PENDENTE</option>
+                                    <option value="PAGO">PAGO</option>
+                                    <option value="VENCIDO">VENCIDO</option>
+                                </select>
                             </div>
                             <div className="mb-4">
                                 <label htmlFor="arquivo" className="block font-bold mb-2">Boleto Arquivo</label>
@@ -440,6 +477,16 @@ const BoletosAdmin = () => {
                                 />
                             </div>
                             <div className="mb-4">
+                                <label htmlFor="usuario" className="block font-bold mb-2">Usuário</label>
+                                <Select
+                                    options={usuario.map((usuario) => ({ value: usuario.nome, label: usuario.nome }))}
+                                    value={selectUsuario}
+                                    onChange={handleUsuarioChange}
+                                    isMulti={false}
+                                    required
+                                />
+                            </div>
+                            <div className="mb-4">
                                 <label htmlFor="vencimento" className="block font-bold mb-2">Vencimento</label>
                                 <input
                                     id="vencimento"
@@ -450,14 +497,19 @@ const BoletosAdmin = () => {
                                 />
                             </div>
                             <div className="mb-4">
-                                <label htmlFor="usuario" className="block font-bold mb-2">Usuário</label>
-                                <Select
-                                    options={usuario.map((usuario) => ({ value: usuario.nome, label: usuario.nome }))}
-                                    value={selectUsuario}
-                                    onChange={handleUsuarioChange}
-                                    isMulti={false}
+                                <label htmlFor="regra" className="block font-bold mb-2">Status</label>
+                                <select
+                                    id="regra"
+                                    className="border p-2 rounded w-full"
+                                    value={editStatus}
+                                    onChange={e => setEditStatus(e.target.value)}
                                     required
-                                />
+                                >
+                                    <option value="">Status</option>
+                                    <option value="PENDENTE">PENDENTE</option>
+                                    <option value="PAGO">PAGO</option>
+                                    <option value="VENCIDO">VENCIDO</option>
+                                </select>
                             </div>
                             <div className="mb-4">
                                 <label htmlFor="arquivo" className="block font-bold mb-2">Documentação Arquivo</label>

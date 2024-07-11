@@ -6,7 +6,7 @@ const upload = require("../config/multer")
 
 router.route("/boleto").get(auth, adminAuth, (req,res) => BoletoController.getAll(req,res))
 router.route("/boleto/:id").get(auth, (req,res) => BoletoController.getId(req,res))
-//router.route("/boleto/titulo/:titulo/id").get(auth, (req, res) => BoletoController.getIdByName(req, res));
+router.route("/boleto/usuario/:usuario").get(auth, (req, res) => BoletoController.getBoletosByUser(req, res));
 router.route("/boleto").post(upload.single("boletoAr"), auth, adminAuth, (req,res) => BoletoController.create(req,res))
 router.route("/boleto/:id").put(upload.single("boletoAr"), auth, adminAuth, (req,res) => BoletoController.update(req,res))
 router.route("/boleto/:id").delete(auth, adminAuth, (req,res) => BoletoController.delete(req,res))
