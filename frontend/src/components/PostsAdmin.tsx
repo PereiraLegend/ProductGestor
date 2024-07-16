@@ -318,7 +318,7 @@ const PostsAdmin = () => {
 
             {isOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                    <div className="bg-white p-8 rounded shadow-md">
+                    <div className="bg-white p-8 rounded shadow-md w-[60%]">
                         <h2 className="text-xl mb-4">Cadastrar Usuário</h2>
                         <form onSubmit={EnviarFormulario}>
                             <div className="mb-4">
@@ -385,7 +385,7 @@ const PostsAdmin = () => {
 
             {itemToDelete && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                    <div className="bg-white p-8 rounded shadow-md">
+                    <div className="bg-white p-8 rounded shadow-md ">
                         <h2 className="text-xl mb-4">Confirmação</h2>
                         <p>Tem certeza de que deseja excluir este usuário?</p>
                         <div className="flex justify-between mt-4">
@@ -408,7 +408,7 @@ const PostsAdmin = () => {
 
             {isEditOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                    <div className="bg-white p-8 rounded shadow-md">
+                    <div className="bg-white p-8 rounded shadow-md w-[60%]">
                         <h2 className="text-xl mb-4">Editar Usuário</h2>
                         <form onSubmit={AlterarFormulario}>
                             <div className="mb-4">

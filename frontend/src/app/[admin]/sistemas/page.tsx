@@ -16,7 +16,7 @@ export default async function sistemasAdmin(){
     return(
         <div>
             <CabecalhoAdmin/>
-            <div className='flex items-center justify-center text-xl pt-5 font-bold'>Sistemas</div>
+            <div className='flex items-center justify-center text-xl pt-5 font-bold'>Produtos</div>
             <SistemasAdmin/>
         </div>
     )

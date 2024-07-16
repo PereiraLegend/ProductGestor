@@ -239,7 +239,7 @@ const SistemasAdmin = () => {
                     <div className="flex">
                         <input
                             type="text"
-                            placeholder="Buscar Sistema..."
+                            placeholder="Buscar Produto..."
                             className="border pl-2 pr-2 rounded mr-2"
                             value={filtro}
                             onChange={handleFiltroChange}
@@ -316,7 +316,7 @@ const SistemasAdmin = () => {
 
             {isOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                    <div className="bg-white p-8 rounded shadow-md">
+                    <div className="bg-white p-8 rounded shadow-md w-[60%]">
                         <h2 className="text-xl mb-4">Cadastrar Sistema</h2>
                         <form onSubmit={EnviarFormulario}>
                             <div className="mb-4">
@@ -397,7 +397,7 @@ const SistemasAdmin = () => {
 
             {isEditOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                    <div className="bg-white p-8 rounded shadow-md">
+                    <div className="bg-white p-8 rounded shadow-md w-[60%]">
                         <h2 className="text-xl mb-4">Editar Sistema</h2>
                         <form onSubmit={AlterarFormulario}>
                             <div className="mb-4">

@@ -42,7 +42,7 @@ export default function CabecalhoAdmin() {
                         Posts
                     </div>
                     <div className="cursor-pointer bg-[#4F46E5] hover:bg-gray-300 p-1 rounded-lg m-1" onClick={() => navegacao('/admin/sistemas')}>
-                        Sistemas
+                        Produtos
                     </div>
                     <div className="cursor-pointer bg-[#4F46E5] hover:bg-gray-300 p-1 rounded-lg m-1" onClick={() => navegacao('/admin/usuarios')}>
                         Usuários
